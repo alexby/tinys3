@@ -35,14 +35,19 @@ class S3Request(object):
         self.tls = conn.tls
         self.endpoint = conn.endpoint
         self.params = params
+        self.bucket_url_format = conn.bucket_url_format
 
     def bucket_url(self, key, bucket):
         """Function to generate the request URL. Is used by every request"""
         protocol = 'https' if self.tls else 'http'
         key = stringify(key)
         bucket = stringify(bucket)
-        url = "{0}://{1}.{2}/{3}".format(protocol, bucket, self.endpoint,
-                                         key.lstrip('/'))
+        if self.bucket_url_format == 'BUCKET_URL_FORMAT_SUBDOMAIN':
+            url = "{0}://{1}.{2}/{3}".format(protocol, bucket, self.endpoint,
+                                             key.lstrip('/'))
+        else:#BUCKET_URL_FORMAT_FOLDER
+            url = "{0}://{1}/{2}/{3}".format(protocol, self.endpoint, bucket,
+                                             key.lstrip('/'))
         # If params have been specified, add them to URL in the format :
         # url?param1&param2=value, etc.
         if self.params is not None:

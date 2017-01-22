@@ -15,8 +15,11 @@ class Base(object):
     This is an "abstract" class, both Connection and Pool implement it.
     """
 
+    BUCKET_URL_FORMAT_SUBDOMAIN = 'BUCKET_URL_FORMAT_SUBDOMAIN'
+    BUCKET_URL_FORMAT_FOLDER = 'BUCKET_URL_FORMAT_FOLDER'
+
     def __init__(self, access_key, secret_key, default_bucket=None, tls=False,
-                 endpoint="s3.amazonaws.com"):
+                 endpoint="s3.amazonaws.com", bucket_url_format=BUCKET_URL_FORMAT_SUBDOMAIN):
         """
         Creates a new S3 connection
 
@@ -29,12 +32,14 @@ class Base(object):
             - tls               (Optional) Make the requests using secure
               connection (Defaults to False)
             - endpoint          (Optional) Sets the s3 endpoint.
+            - bucket_url_format (Optional) Format url used to connect to bucket
 
         """
         self.default_bucket = default_bucket
         self.auth = S3Auth(access_key, secret_key)
         self.tls = tls
         self.endpoint = endpoint
+        self.bucket_url_format = bucket_url_format
 
     def bucket(self, bucket):
         """
